@@ -5,7 +5,6 @@
 // ==================================================
 // ピン設定
 // ==================================================
-
 #define I2C_SDA_PIN  1
 #define I2C_SCL_PIN  2
 #define SWITCH_PIN   8
@@ -13,7 +12,6 @@
 // ==================================================
 // 測定間隔
 // ==================================================
-
 // SHT30の読み取り間隔
 const unsigned long SENSOR_INTERVAL_MS = 1000;
 
@@ -39,7 +37,6 @@ Adafruit_SHT31 sht30 = Adafruit_SHT31();
 // ==================================================
 // 測定データ
 // ==================================================
-
 float currentTemperature = 0.0f;
 float currentHumidity = 0.0f;
 
@@ -54,7 +51,6 @@ int historyWritePosition = 0;
 // ==================================================
 // 画面切り替え
 // ==================================================
-
 enum DisplayMode {
   MODE_REALTIME,
   MODE_GRAPH
@@ -65,27 +61,21 @@ DisplayMode displayMode = MODE_REALTIME;
 // ==================================================
 // タイマー
 // ==================================================
-
 unsigned long lastSensorTime = 0;
 unsigned long lastGraphTime = 0;
 
 // ==================================================
 // スイッチのチャタリング対策
 // ==================================================
-
 bool lastSwitchReading = HIGH;
 bool stableSwitchState = HIGH;
-
 unsigned long switchChangeTime = 0;
-
 const unsigned long DEBOUNCE_TIME_MS = 30;
 
 // ==================================================
 // 温度履歴へ追加
 // ==================================================
-
-void addTemperatureHistory(float temperature)
-{
+void addTemperatureHistory(float temperature){
   temperatureHistory[historyWritePosition] = temperature;
 
   historyWritePosition++;
@@ -102,9 +92,7 @@ void addTemperatureHistory(float temperature)
 // ==================================================
 // 古い順に温度を取得
 // ==================================================
-
-float getHistoryTemperature(int position)
-{
+float getHistoryTemperature(int position){
   int index;
 
   if (historyCount < HISTORY_SIZE) {
@@ -123,9 +111,7 @@ float getHistoryTemperature(int position)
 // ==================================================
 // スイッチ処理
 // ==================================================
-
-void updateSwitch()
-{
+void updateSwitch(){
   bool reading = digitalRead(SWITCH_PIN);
 
   if (reading != lastSwitchReading) {
@@ -152,15 +138,10 @@ void updateSwitch()
 // ==================================================
 // SHT30の測定
 // ==================================================
-
-void updateSensor()
-{
+void updateSensor(){
   unsigned long now = millis();
 
-  if (
-    lastSensorTime != 0 &&
-    now - lastSensorTime < SENSOR_INTERVAL_MS
-  ) {
+  if (lastSensorTime != 0 && (now - lastSensorTime) < SENSOR_INTERVAL_MS) {
     return;
   }
 
@@ -195,9 +176,7 @@ void updateSensor()
 // ==================================================
 // 10秒ごとの履歴記録
 // ==================================================
-
-void updateTemperatureHistory()
-{
+void updateTemperatureHistory(){
   if (!sensorDataValid || historyCount == 0) {
     return;
   }
@@ -214,9 +193,7 @@ void updateTemperatureHistory()
 // ==================================================
 // センサーエラー表示
 // ==================================================
-
-void displaySensorError()
-{
+void displaySensorError(){
   oled.clearBuffer();
 
   oled.setFont(u8g2_font_unifont_t_japanese1);
@@ -229,25 +206,13 @@ void displaySensorError()
 // ==================================================
 // リアルタイムモニタ
 // ==================================================
-
-void displayRealtimeMonitor()
-{
+void displayRealtimeMonitor(){
   char temperatureText[12];
   char humidityText[12];
 
-  snprintf(
-    temperatureText,
-    sizeof(temperatureText),
-    "%.1f",
-    currentTemperature
-  );
+  snprintf(temperatureText, sizeof(temperatureText), "%.1f", currentTemperature);
 
-  snprintf(
-    humidityText,
-    sizeof(humidityText),
-    "%.1f",
-    currentHumidity
-  );
+  snprintf(humidityText, sizeof(humidityText), "%.1f", currentHumidity);
 
   oled.clearBuffer();
 
@@ -284,9 +249,7 @@ void displayRealtimeMonitor()
 // ==================================================
 // 温度グラフ
 // ==================================================
-
-void displayTemperatureGraph()
-{
+void displayTemperatureGraph(){
   oled.clearBuffer();
 
   // グラフの表示領域
@@ -326,12 +289,9 @@ void displayTemperatureGraph()
   }
 
   // グラフが平らになりすぎないよう最低2℃の幅を確保
-  float centerTemperature =
-    (minimumTemperature + maximumTemperature) / 2.0f;
+  float centerTemperature = (minimumTemperature + maximumTemperature) / 2.0f;
 
-  if (
-    maximumTemperature - minimumTemperature < 2.0f
-  ) {
+  if (maximumTemperature - minimumTemperature < 2.0f) {
     minimumTemperature = centerTemperature - 1.0f;
     maximumTemperature = centerTemperature + 1.0f;
   } else {
@@ -341,30 +301,14 @@ void displayTemperatureGraph()
   }
 
   // グラフ枠
-  oled.drawFrame(
-    graphLeft,
-    graphTop,
-    graphRight - graphLeft,
-    graphBottom - graphTop
-  );
+  oled.drawFrame(graphLeft, graphTop, graphRight - graphLeft, graphBottom - graphTop);
 
   // 最小値・最大値
   char maximumText[8];
   char minimumText[8];
 
-  snprintf(
-    maximumText,
-    sizeof(maximumText),
-    "%.0f",
-    maximumTemperature
-  );
-
-  snprintf(
-    minimumText,
-    sizeof(minimumText),
-    "%.0f",
-    minimumTemperature
-  );
+  snprintf(maximumText, sizeof(maximumText), "%.0f", maximumTemperature);
+  snprintf(minimumText, sizeof(minimumText), "%.0f", minimumTemperature);
 
   oled.setFont(u8g2_font_5x7_tf);
   oled.drawStr(0, graphTop + 6, maximumText);
@@ -380,37 +324,20 @@ void displayTemperatureGraph()
     int x;
 
     // 31点分の位置を固定し、データがたまる様子も表示
-    x = graphLeft +
-        ((graphRight - graphLeft - 1) * i) /
-        (HISTORY_SIZE - 1);
+    x = graphLeft + ((graphRight - graphLeft - 1) * i) / (HISTORY_SIZE - 1);
 
-    float normalized =
-      (temperature - minimumTemperature) /
-      (maximumTemperature - minimumTemperature);
+    float normalized = (temperature - minimumTemperature) / (maximumTemperature - minimumTemperature);
 
-    int y = graphBottom - 1 -
-            (int)(
-              normalized *
-              (graphBottom - graphTop - 2)
-            );
+    int y = graphBottom - 1 - (int)(normalized *(graphBottom - graphTop - 2));
 
-    y = constrain(
-      y,
-      graphTop + 1,
-      graphBottom - 1
-    );
+    y = constrain(y, graphTop + 1, graphBottom - 1);
 
     // 測定点
     oled.drawPixel(x, y);
 
     // 前の測定点と線でつなぐ
     if (i > 0) {
-      oled.drawLine(
-        previousX,
-        previousY,
-        x,
-        y
-      );
+      oled.drawLine(previousX, previousY, x, y);
     }
 
     previousX = x;
@@ -428,9 +355,7 @@ void displayTemperatureGraph()
 // ==================================================
 // setup
 // ==================================================
-
-void setup()
-{
+void setup(){
   Serial.begin(115200);
   delay(500);
 
@@ -476,8 +401,7 @@ void setup()
 // loop
 // ==================================================
 
-void loop()
-{
+void loop(){
   updateSwitch();
   updateSensor();
   updateTemperatureHistory();
