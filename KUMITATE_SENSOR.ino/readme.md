@@ -86,6 +86,47 @@ KUMITATE-SENSOR
 - MSA3S02のY軸加速度
 - MSA3S02のZ軸加速度
 
+## 詳しい解説記事
+
+KUMITATE-SENSORに搭載している各センサーの仕様や、
+Arduino・ESP32からの使い方について詳しく解説しています。
+
+### SHT40-A 温度・湿度センサー
+
+SHT40の仕様、I²Cアドレス、温度・湿度の取得方法、
+SHT30との違いなどを解説しています。
+
+[SHT40とは？Arduino・ESP32で温度・湿度を測定する方法を解説](https://kumicla.tatepro.com/sht40/)
+
+### BH1750 照度センサー
+
+BH1750のI²Cアドレスや、Arduino・ESP32から
+照度（lux）を取得する方法を解説しています。
+
+[BH1750とは？Arduino・ESP32で照度（lux）を測定する方法を解説](https://kumicla.tatepro.com/bh1750/)
+
+### MSA3S02 3軸加速度センサー
+
+MSA3S02のI²Cレジスタや、
+X・Y・Z軸の加速度を取得する方法を解説しています。
+
+[MSA3S02とは？Arduino・ESP32で3軸加速度を測定する方法を解説](https://kumicla.tatepro.com/msa3s02/)
+
+
+## I²Cについて学ぶ
+
+KUMITATE-SENSORでは、3種類のセンサーを
+同じSDA・SCLのI²Cバスに接続しています。
+
+I²Cの仕組みや、複数のI²Cデバイスを扱う方法については
+以下の記事で詳しく解説しています。
+
+[I²Cとは？通信の仕組みを解説](https://kumicla.tatepro.com/i2c/)
+
+[Arduino・ESP32でI²Cスキャナを使う方法｜I²Cアドレスを調べるサンプルコード](https://kumicla.tatepro.com/i2c-scanner/)
+
+[Arduino・ESP32で複数のI²Cセンサーを同時に使う方法｜アドレス重複の対処も解説](https://kumicla.tatepro.com/i2c-multiple-devices/)
+
 ## I²Cアドレス
 
 ```cpp
